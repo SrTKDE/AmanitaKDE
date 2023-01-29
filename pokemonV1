@@ -1,0 +1,56 @@
+
+$nomention
+$var[error;false]
+$try
+$httpGet[https://pokeapi.co/api/v2/pokemon/$optOff[$unescape[$message[1]]]]
+$var[error;false]
+$catch
+$var[error;true]
+$endtry
+
+$embedSuppressErrors[$username[$botID] • Comando de Pokémon;**$username[$authorID]#$discriminator[$authorID]**, perdão pelo indesejado erro. Verifique se o ID do pokémon está entre 1 a 1008 ou 10001 a 10249
+OBS.: Alguns pokémons não tem a arte **shiny** disponíve!;$getServerVar[color];;;]
+$onlyIf[$and[$checkContains[$optOff[$unescape[$httpResult]];Not Found]==false;$var[error]==false]==true;O Pokémon não é válido.]
+
+$argsCheck[>1;**$username[$authorID]#$discriminator[$authorID]** é necessário que você digite o ID do pokémon.]
+
+$setVar[pokemon;$message[1];$authorID]
+
+$color[$getServerVar[color]]
+$footerIcon[$authorAvatar]
+$footer[$username]
+$addTimestamp
+$title[$username[$botID] • Comando de Pokémon]
+$addField[Informações;Nome: **$toTitleCase[$httpResult[name]]**
+ID: $message[1]
+Versão da Imagem: **Official-artwork**
+Shiny: **Não**]
+$addField[Tipo;
+1: **$toTitleCase[$httpResult[types;0;type;name]]**$if[$httpResult[types;1]!=]
+2: **$toTitleCase[$httpResult[types;1;type;name]]**$endif$if[$httpResult[types;2]!=]
+3: **$toTitleCase[$httpResult[types;2;type;name]]**
+$endif]
+$addField[Abilidades;
+1: **$toTitleCase[$httpResult[abilities;0;ability;name]]**$if[$httpResult[abilities;1]!=]
+2: **$toTitleCase[$httpResult[abilities;1;ability;name]]**$endif$if[$httpResult[abilities;2]!=]
+3: **$toTitleCase[$httpResult[abilities;2;ability;name]]**
+$endif]
+
+$image[$httpResult[sprites;other;official-artwork;front_default]]
+
+$if[$message[1]<=1008]
+$addButton[no;https://www.pokemon.com/br/pokedex/$httpResult[name];Ver na Pokédex;link;no;]
+$else
+$addButton[no;https://www.pokemon.com/br/pokedex/$httpResult[name];Ver na Pokédex;link;yes;]
+$endif
+
+$addButton[no;$httpResult[sprites;other;official-artwork;front_default]?size=2048&quality=lossless;Baixar;link;no;]
+$addButton[no;shiny-$authorID;Shiny;danger;no;]
+
+$if[$message[1]<=905]
+$addButton[no;home-$authorID;Home Art;danger;no;]
+$else
+$addButton[no;home-$authorID;Home Art;danger;yes;]
+$endif
+
+$endif
